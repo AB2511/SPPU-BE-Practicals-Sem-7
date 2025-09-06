@@ -53,11 +53,11 @@ pip install numpy pandas matplotlib seaborn scikit-learn tensorflow
 ## How to Run
 1. Clone the repository:  
    ```
-   git clone https://github.com/AB2511/SPPU-BE-Projects-Sem-7.git
+   git clone https://github.com/AB2511/SPPU-BE-Practicals-Sem-7.git
    ```
 2. Navigate to the ML folder:  
    ```
-   cd SPPU-BE-Projects-Sem-7/ML
+   cd SPPU-BE-Practicals-Sem-7/ML
    ```
 3. Open Jupyter Notebook:  
    ```
