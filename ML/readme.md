@@ -16,7 +16,6 @@ Datasets for the assignments have been uploaded to this repository for convenien
   4. Implement linear regression and random forest regression models.
   5. Evaluate the models and compare scores (R2, RMSE).
 - **Dataset**: `uber.csv` (from [Kaggle](https://www.kaggle.com/datasets/yasserh/uber-fares-dataset)).
-- **PDF Reference**: `MLAssignment1.pdf` (includes code, outputs, and screenshots).
 
 ### Assignment 2: Bank Customer Churn Prediction
 - **File**: `MLAssignment2.ipynb`
@@ -28,21 +27,18 @@ Datasets for the assignments have been uploaded to this repository for convenien
   4. Initialize and build the model; identify improvements.
   5. Print accuracy score and confusion matrix.
 - **Dataset**: `Churn_Modelling.csv` (from [Kaggle](https://www.kaggle.com/barelydedicated/bank-customer-churn-modeling)).
-- **PDF Reference**: `MLAssignment2.pdf` (includes code, outputs, and screenshots).
 
 ### Assignment 3: Gradient Descent Algorithm
 - **File**: `MLAssignment3.ipynb`
 - **Description**: Implement Gradient Descent to find the local minima of the function \( y = (x + 3)^2 \), starting from \( x = 2 \).
 - **Tasks**: Implement the algorithm with convergence criterion and plot the descent path.
 - **Dataset**: None (algorithm implementation).
-- **PDF Reference**: `MLAssignment3.pdf` (includes code, outputs, and screenshots of the plot).
 
 ### Assignment 4: K-Nearest Neighbors on Diabetes Dataset
 - **File**: `MLAssignment4.ipynb`
 - **Description**: Implement K-Nearest Neighbors on the diabetes dataset and compute confusion matrix, accuracy, error rate, precision, and recall.
 - **Tasks**: Pre-process data, train KNN, evaluate metrics.
 - **Dataset**: `diabetes.csv` (from [Kaggle](https://www.kaggle.com/datasets/abdallamahgoub/diabetes)).
-- **PDF Reference**: `MLAssignment4.pdf` (includes code, outputs, and screenshots).
 
 ## Requirements
 To run the notebooks, you'll need Python 3.x and the following libraries. Install them using `pip`:
