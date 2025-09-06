@@ -49,11 +49,11 @@ To run the code, you'll need the following:
 ## How to Run
 1. Clone the repository:  
    ```
-   git clone https://github.com/AB2511/SPPU-BE-Projects-Sem-7.git
+   git clone [https://github.com/AB2511/SPPU-BE-Practicals-Sem-7.git]
    ```
 2. Navigate to the DAA folder:  
    ```
-   cd SPPU-BE-Projects-Sem-7/DAA assignemnt
+   cd SPPU-BE-Practicals-Sem-7/DAA assignemnt
    ```
 
 ### For C++ Files (`Fibononrecur.cpp`, `Fiborecur.cpp`)
