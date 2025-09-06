@@ -1,8 +1,3 @@
-Below is the updated `README.md` file for the **Design and Analysis of Algorithms (DAA)** subject, removing references to `.docx` files since they are not being uploaded. The content is adjusted to reflect only the source code files and their details.
-
----
-
-```markdown
 # SPPU BE Projects Semester 7 - Design and Analysis of Algorithms (DAA)
 
 This repository contains implementations for Design and Analysis of Algorithms (DAA) assignments as part of the Semester 7 BE (Bachelor of Engineering) curriculum at Savitribai Phule Pune University (SPPU). The assignments cover various algorithmic techniques including recursion, greedy methods, dynamic programming, and backtracking. Only source code files are included. Datasets or additional resources are not required unless specified.
