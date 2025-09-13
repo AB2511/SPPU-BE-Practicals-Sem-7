@@ -1,9 +1,0 @@
-Delivered-To: example@gmail.com
-Received: by 2002:a05:620a:2142:b0:4f:de:42 with SMTP id ab2csp235801qkb;
-        Tue, 12 Sep 2023 08:22:32 -0700 (PDT)
-Date: Tue, 12 Sep 2023 08:22:30 -0700
-From: "Amazon" <no-reply@amazon.com>
-To: example@gmail.com
-Subject: Your order has been shipped!
-Message-ID: <20230912082230.12345@mail.amazon.com>
-MIME-Version: 1.0
