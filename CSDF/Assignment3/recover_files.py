@@ -1,96 +1,94 @@
-"""
-Simple file-carving demo (JPEG, PNG, PDF).
-Usage:
-    python recover_files.py image.dd output_folder
-Notes:
-- Works best on disk image files (raw dd images). Avoid running on live disks.
-- This is a teaching/demo tool. It is not a full forensic suite.
-"""
-
 import os
-import sys
+import io
+import csv
+import logging
+from datetime import datetime
 
-SIGNATURES = {
-    "jpg": {
-        "start": b"\xff\xd8",
-        "end": b"\xff\xd9",
-    },
-    "png": {
-        "start": b"\x89PNG\r\n\x1a\n",
-        # We'll search for the IEND chunk and include its 12-byte trailer
-        "end_marker": b"IEND",
-        "end_trailer_len": 12,
-    },
-    "pdf": {
-        "start": b"%PDF",
-        "end": b"%%EOF",
-    }
-}
+# Setup logging
+logging.basicConfig(filename='forensic_log.txt', level=logging.INFO, format='%(asctime)s - %(message)s')
+logging.info("Starting recover_files.py")
 
-def ensure_dir(d):
-    if not os.path.exists(d):
-        os.makedirs(d)
+def find_all_offsets(data, signature):
+    offsets = []
+    start = 0
+    while True:
+        start = data.find(signature, start)
+        if start == -1:
+            break
+        offsets.append(start)
+        start += 1
+    return offsets
 
-def find_all_offsets(data, pattern):
-    """Return list of offsets where pattern occurs."""
-    offs = []
-    i = data.find(pattern)
-    while i != -1:
-        offs.append(i)
-        i = data.find(pattern, i+1)
-    return offs
+def validate_jpeg(data):
+    # Check for JPEG markers in first 512 bytes (more permissive)
+    valid_markers = [b"\xff\xc0", b"\xff\xc2", b"\xff\xc4", b"\xff\xda", b"\xff\xdb"]
+    for marker in valid_markers:
+        if marker in data[:512]:
+            return True
+    return False
 
 def recover_from_image(img_path, out_dir):
+    os.makedirs(out_dir, exist_ok=True)
+    
+    valid_count = 0
+    invalid_count = 0
+    report_data = []
+    
     with open(img_path, "rb") as f:
         data = f.read()
-
-    ensure_dir(out_dir)
-    recovered_count = 0
-
-    # JPEG
-    for start in find_all_offsets(data, SIGNATURES["jpg"]["start"]):
-        # find nearest end after start
-        end = data.find(SIGNATURES["jpg"]["end"], start+2)
-        if end != -1:
-            end += len(SIGNATURES["jpg"]["end"])
-            fname = os.path.join(out_dir, f"recovered_{recovered_count:04d}.jpg")
-            with open(fname, "wb") as out:
-                out.write(data[start:end])
-            recovered_count += 1
-
-    # PNG
-    for start in find_all_offsets(data, SIGNATURES["png"]["start"]):
-        # find the IEND chunk after start
-        iend = data.find(SIGNATURES["png"]["end_marker"], start+8)
-        if iend != -1:
-            # include 12 bytes trailer after IEND marker (length+IEND+CRC)
-            end = iend + SIGNATURES["png"]["end_trailer_len"]
-            fname = os.path.join(out_dir, f"recovered_{recovered_count:04d}.png")
-            with open(fname, "wb") as out:
-                out.write(data[start:end])
-            recovered_count += 1
-
-    # PDF
-    for start in find_all_offsets(data, SIGNATURES["pdf"]["start"]):
-        # find the EOF marker after start
-        eof = data.find(SIGNATURES["pdf"]["end"], start+4)
-        if eof != -1:
-            eof += len(SIGNATURES["pdf"]["end"])
-            # PDFs sometimes have garbage after EOF; include a small window
-            end = eof + 4
-            fname = os.path.join(out_dir, f"recovered_{recovered_count:04d}.pdf")
-            with open(fname, "wb") as out:
-                out.write(data[start:end])
-            recovered_count += 1
-
-    print(f"[+] Finished. Recovered {recovered_count} files to '{out_dir}'")
-    if recovered_count == 0:
-        print("[-] No matches found. Try on a larger / different image or add more signatures.")
+    
+    # JPEG carving
+    for start in find_all_offsets(data, b"\xff\xd8"):
+        end = data.find(b"\xff\xd9", start + 2)
+        if end == -1 or end - start > 10_000_000:  # Cap file size
+            continue
+        jpg_data = data[start:end + 2]
+        filename = f"recovered_{valid_count + invalid_count:04d}.jpg"
+        is_valid = validate_jpeg(jpg_data)
+        validity = "Valid" if is_valid else "Invalid"
+        out_path = os.path.join(out_dir, filename)
+        
+        with open(out_path, "wb") as out:
+            out.write(jpg_data)
+        print(f"Recovered {filename} at offset {start} ({validity})")
+        logging.info(f"Recovered {filename} at offset {start} ({validity})")
+        
+        # Add to report
+        report_data.append({
+            "filename": filename,
+            "offset": start,
+            "size": end - start + 2,
+            "filetype": "JPG",
+            "validity": validity
+        })
+        
+        if is_valid:
+            valid_count += 1
+        else:
+            invalid_count += 1
+    
+    # Write CSV report
+    csv_path = os.path.join(out_dir, "recovery_report.csv")
+    with open(csv_path, "w", newline="") as csvfile:
+        fieldnames = ["filename", "offset", "size", "filetype", "validity"]
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in report_data:
+            writer.writerow(row)
+    logging.info(f"Generated recovery_report.csv at {csv_path}")
+    
+    print(f"[+] Finished. Recovered {valid_count + invalid_count} files to '{out_dir}'")
+    print(f"  Valid files: {valid_count}")
+    print(f"  Invalid files: {invalid_count}")
+    logging.info(f"Recovered {valid_count} valid, {invalid_count} invalid files")
 
 if __name__ == "__main__":
+    import sys
     if len(sys.argv) != 3:
-        print("Usage: python recover_files.py image.dd output_folder")
+        print(f"Usage: {sys.argv[0]} image.dd output_folder")
+        logging.error("Invalid arguments")
         sys.exit(1)
     img_path = sys.argv[1]
     out_dir = sys.argv[2]
     recover_from_image(img_path, out_dir)
+    logging.info("Completed recover_files.py")
