@@ -133,12 +133,87 @@ Each assignment includes code, sample input, and output demonstration.
 
 ---
 
+## 📂 Assignment 5 – Honeypot Implementation
+
+**Title:** Study of Honeypot
+
+* **Files:**
+  * [`honeypot.py`][honeypot-py] → TCP server acting as a low-interaction honeypot
+  * [`test_client_verbose.py`][test-client-verbose-py] → Client script to simulate unauthorized access
+  * `honeypot_log.txt` → Log file for connection attempts and data
+* **Theory:**
+  * Honeypots are decoy systems designed to detect and log unauthorized access, used in cybersecurity to study attacker behavior.
+  * Types: Low-interaction (simple, low risk, e.g., TCP listeners); high-interaction (complex, real services, higher risk).
+  * Advantages: Low false positives (logs only real connections), works in encrypted environments.
+  * Disadvantages: Risk of detection or exploitation (mitigated by local-only testing on `127.0.0.1`).
+* **Description:**
+  * Implements a low-interaction honeypot using Python’s `socket` and `datetime` libraries.
+  * `honeypot.py`: Listens on port 2222 (bound to `0.0.0.0`), logs connection attempts and data to `honeypot_log.txt`, and responds with "Access Denied. This activity is logged."
+  * `test_client_verbose.py`: Simulates an attacker by connecting to `127.0.0.1:2222`, sending "hello_from_test_client," and displaying the server’s response.
+  * Aligns with CSDF objectives to study honeypots, demonstrating detection and logging of unauthorized access.
+* **Output:**
+  * **honeypot.py**:
+    ```bash
+    D:\BE Practicals\CSDF>python honeypot.py
+    [*] Honeypot listening on port 2222...
+    [2025-10-06 22:58:39] Honeypot started on port 2222 (bind=0.0.0.0)
+    [2025-10-06 22:58:52] Connection attempt from 127.0.0.1:61185
+    [2025-10-06 22:58:52] Data from 127.0.0.1: hello_from_test_client
+    ```
+  * **test_client_verbose.py**:
+    ```bash
+    D:\BE Practicals\CSDF>python test_client_verbose.py
+    Connecting to 127.0.0.1:2222...
+    Connected. Sending data...
+    Reply from server: Access Denied. This activity is logged.
+    Client socket closed.
+    ```
+  * **honeypot_log.txt**:
+    ```text
+    [2025-10-06 22:58:39] Honeypot started on port 2222
+    [2025-10-06 22:58:52] Connection attempt from 127.0.0.1:61185
+    [2025-10-06 22:58:52] Data from 127.0.0.1: hello_from_test_client
+    ```
+* **Issues Faced:**
+  * Original HoneyBOT website (https://www.atomicsoftwaresolutions.com/honeybot.php) returned a 404 error.
+  * Wayback Machine did not archive the HoneyBOT installer (http://www.atomicsoftwaresolutions.com/downloads/HoneyBOTSetup.exe).
+  * Alternative downloads (e.g., Software Informer) raised safety concerns due to potential false-positive malware warnings on old executables.
+  * VirtualBox VM setup (Windows 11, 4 GB RAM, UEFI enabled) delayed due to slow 7.2 GB ISO download.
+* **Why Alternative Chosen:**
+  * Due to the unavailability of HoneyBOT and safety concerns with third-party downloads, a custom Python-based honeypot was implemented.
+  * Uses standard Python libraries (`socket`, `datetime`), requiring no external dependencies, ensuring safety and ease of use.
+  * Performs core honeypot functions: listens for unauthorized access, logs attacker details (IP, port, data), and responds with a security warning.
+  * Demonstrates low-interaction honeypot principles (low resource, low risk) as per the CSDF syllabus, fulfilling the objective of studying honeypot behavior in a safe, simulated environment.
+* **Results Analysis:**
+  * Successfully logs connection attempts and data, mimicking a low-interaction honeypot’s role in detecting unauthorized access.
+  * Advantages: Low false positives (logs only real connections), safe (local-only testing on `127.0.0.1`).
+  * Disadvantages: Limited to TCP, no GUI or service emulation (e.g., HTTP/FTP) unlike HoneyBOT’s medium-interaction design.
+  * Meets SPPU CSDF practical requirements by providing screenshot-able evidence (code, cmd outputs, log file) and aligning with the document’s honeypot concepts.
+* **Note:**
+  * Due to the unavailability of the original HoneyBOT tool (404 error, Wayback unarchived) and safety concerns with third-party downloads, this Python-based honeypot was implemented. It fulfills the objective of studying honeypot behavior by demonstrating detection and logging in a safe, simulated environment. Screenshots of code, outputs, and logs are included in the practical report. Efforts to set up a VM (Windows 11 ISO) and download HoneyBOT from Software Informer are ongoing.
+* **How to Run:**
+  ```bash
+  # Run server
+  cd CSDF/Assignment5
+  python honeypot.py
+
+  # Run client in a separate Command Prompt
+  cd CSDF/Assignment5
+  python test_client_verbose.py
+  ```
+
+[honeypot-py]: https://github.com/AB2511/SPPU-BE-Practicals-Sem-7/blob/main/CSDF/Assignment5/honeypot.py
+[test-client-verbose-py]: https://github.com/AB2511/SPPU-BE-Practicals-Sem-7/blob/main/CSDF/Assignment5/test_client_verbose.py
+
+---
+
 ## 🛠 Requirements
 
-* Python 3.8+
-* Libraries:
+* Python 3.8+ (required for all assignments)
+* Libraries (for Assignment 2 only):
   * `captcha` (`pip install captcha`)
   * `Pillow` (installed automatically with `captcha`)
+* No additional libraries required for Assignments 1, 3, 4, and 5
 
 ---
 
@@ -146,19 +221,30 @@ Each assignment includes code, sample input, and output demonstration.
 
 ```bash
 # Assignment 1
+cd CSDF/Assignment1
 python email_header_analyzer.py
-# Provide path to CSDF/Assignment1/header.txt when asked (or place header.txt in the same folder)
+# Provide path to header.txt when asked (or place header.txt in the same folder)
 
 # Assignment 2
+cd CSDF/Assignment2
 python textCaptcha.py
 python imgCaptcha.py
 
 # Assignment 3
+cd CSDF/Assignment3
 python scan_partitions.py image.dd
 python recover_files.py image.dd recovered_files
 
 # Assignment 4
+cd CSDF/Assignment4
 python log_correlation.py
+
+# Assignment 5
+cd CSDF/Assignment5
+# Run server
+python honeypot.py
+# Run client in a separate Command Prompt
+python test_client_verbose.py
 ```
 
 ---
